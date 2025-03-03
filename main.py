@@ -42,7 +42,7 @@ while run == True:
 					print('Score:', cur_hand)
 
 				elif action_begun == 2:
-					x = dealer_hand()
+					x = dealer_hand(cur_hand)
 					print('Dealer''s got', x)
 					if x > 21:
 						print('Not dealer\'s day!')

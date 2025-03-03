@@ -1,0 +1,3 @@
+v1.2
+Dealer now tips a card if the score < cur_hand in main.py
+Dealer's tips are now visible
