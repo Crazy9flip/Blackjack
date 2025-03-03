@@ -1,3 +1,6 @@
+# Ace's value must change mid-game if needed!
+# Dealer must tip a card if the score < cur_hand in main.py
+
 from deck import deck
 from dealer import dealer_hand
 import random as r
@@ -30,6 +33,11 @@ while run == True:
 				if action_begun == 1:
 					tmp_act_key, tmp_act_val = r.choice(list(deck.items()))
 					print('You got', tmp_act_key)
+					if tmp_act_key.startswith("A"):
+						if cur_hand <= 10:
+							tmp_act_val = 11
+						else:
+							tmp_act_val = 1
 					cur_hand += tmp_act_val
 					print('Score:', cur_hand)
 
@@ -49,6 +57,10 @@ while run == True:
 				elif action_begun == 3:
 					input('C''ya, puta!')
 					quit()
+
+				else:
+					print('Unknown value.')
+					continue
 
 			elif cur_hand > 21:
 				print('Not your day!')
