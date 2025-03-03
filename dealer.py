@@ -1,5 +1,4 @@
 # Ace's value must change mid-game if needed!
-# Dealer must tip a card if the score < cur_hand in main.py
 
 from deck import deck
 import random as r
