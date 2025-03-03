@@ -1,5 +1,5 @@
 # Aces' values determined in main.py
-
+ 
 deck = {
     'As'  : 0,
     'Ah'  : 0,
