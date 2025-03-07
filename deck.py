@@ -1,10 +1,10 @@
-# Aces' values determined in main.py
+# Aces' true values determined in main.py
 
 deck = {
-    'As'  : 0,
-    'Ah'  : 0,
-    'Ac'  : 0,
-    'Ad'  : 0,
+    'As'  : 11,
+    'Ah'  : 11,
+    'Ac'  : 11,
+    'Ad'  : 11,
  
     'Ks'  : 10,
     'Kh'  : 10,

@@ -1,2 +1,4 @@
-v1.3
-- Fixed ValueError issue
+v1.4
+- Added 4-deck checker
+- Added Aces' values configurator
+- Dealer now hits 'til 17 and stops at 17

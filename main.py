@@ -1,79 +1,114 @@
-# Ace's value must change mid-game if needed!
+# Dealer must show his first card!
+# Do some refactoring and add if __name__ == '__main__'!
+# Add config.py to modify game rules!
 
 from deck import deck
-from dealer import dealer_hand
-import random as r
-
-print('Well, well, well, if it ain''t gambling motherfucker again.')
+import random
+from collections import Counter
 
 
-run = True
-while run == True:
+def leave():
+	input('C\'ya, puta!')
+	quit()
 
-	cur_round = True
-	cur_hand = 0
 
-	try:
-		action = int(input('\nOne more? ( 1 - Begin | 2 - Leave ) : '))
+def print_cur_results(cards, score):
+	print('Current hand: ', end='')
+	for i in cards:
+		print(i, end=' ')
+	print('\nScore: ' + str(score))
+
+
+def dealer_hand():
+
+	cur_hand = []
+	dealer_score = []
+
+	while sum(dealer_score) < 17:
+		tmp_key, tmp_val = random.choice(list(deck.items()))
 	
-		if action == 2:
-			input('C''ya, puta!')
+		cur_hand.append(tmp_key)
+	
+		# 4 колоды
+		hand_counter = dict(Counter(cur_hand))
+		if hand_counter[tmp_key] > 4:
+			cur_hand.pop()
+			continue
+		
+		dealer_score.append(tmp_val)
+	
+		# Изменяемый туз
+		while sum(dealer_score) > 21 and 11 in dealer_score:
+			ace_index = dealer_score.index(11)
+			dealer_score[ace_index] = 1 
+
+		print_cur_results(cur_hand, sum(dealer_score)) 
+
+	return sum(dealer_score)
+
+
+print('Well, well, well, if it ain\'t gambling motherfucker again.')
+
+
+while True:
+
+	cur_hand = []
+	player_score = []
+	
+	run = True
+	while run:
+	
+		# Взять карту / Остановиться
+	
+		a = input('\nWhat do we do? ( 1 - Hit | 2 - Pass | 3 - Leave ) : ')
+	
+		if a == '1':
+	
+			tmp_key, tmp_val = random.choice(list(deck.items()))
+	
+			cur_hand.append(tmp_key)
+	
+			# 4 колоды
+			hand_counter = dict(Counter(cur_hand))
+			if hand_counter[tmp_key] > 4:
+				cur_hand.pop()
+				continue
+			
+			player_score.append(tmp_val)
+	
+			# Изменяемый туз
+			while sum(player_score) > 21 and 11 in player_score:
+				ace_index = player_score.index(11)
+				player_score[ace_index] = 1 
+
+			print_cur_results(cur_hand, sum(player_score)) 
+	
+		elif a == '2':
+			dealer_turn = dealer_hand()
+			if dealer_turn > sum(player_score) and dealer_turn <= 21:
+				print('You lose!')
+			else:
+				print('You win!')
 			break
 	
-		elif action == 1:
-			while cur_round == True:
-	
-				if cur_hand == 21:
-					print('You lucky bastard!')
-					cur_round = False
-	
-				elif cur_hand < 21:
-					try:
-						action_begun = int(input('What do we do? ( 1 - Tap | 2 - Pass | 3 - Leave ) : '))
-			
-						if action_begun == 1:
-							tmp_act_key, tmp_act_val = r.choice(list(deck.items()))
-							print('You got', tmp_act_key)
-							if tmp_act_key.startswith("A"):
-								if cur_hand <= 10:
-									tmp_act_val = 11
-								else:
-									tmp_act_val = 1
-							cur_hand += tmp_act_val
-							print('Score:', cur_hand)
-		
-						elif action_begun == 2:
-							x = dealer_hand(cur_hand)
-							print('Dealer''s got', x)
-							if x > 21:
-								print('Not dealer\'s day!')
-							elif x == cur_hand:
-								print('It''s a tie!')
-							elif x > cur_hand:
-								print('You lose!')
-							elif x < cur_hand:
-								print('You win!')
-							cur_round = False
-		
-						elif action_begun == 3:
-							input('C''ya, puta!')
-							quit()
-		
-						else:
-							print('Unknown value.')
-							continue
-
-					except ValueError:
-						print('ValueError.')
-						print('Score:', cur_hand)
-	
-				elif cur_hand > 21:
-					print('Not your day!')
-					break
+		elif a == '3':
+			leave()
 	
 		else:
 			print('Unknown value.')
 			continue
-
-	except ValueError:
-		print('ValueError.')
+	
+	
+		# Проверка результатов раунда
+	
+		if sum(player_score) > 21:
+			print('Bust!')
+			break
+	
+		elif sum(player_score) == 21:
+			print('BJ!')
+			break
+			# Ход дилера (перепроверить правила блэкджека)
+	
+		else:
+			pass
