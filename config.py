@@ -1,4 +1,4 @@
-# Not in use yet!
+# Some of the features are not in use yet!
 
 
 ''' Number of decks '''
@@ -28,3 +28,7 @@ DOUBLE_EXPOSURE =  False
 SPLIT           =  False
 
 DOUBLE_DOWN     =  False
+
+SURRENDER       =  False
+
+INSURANCE       =  False

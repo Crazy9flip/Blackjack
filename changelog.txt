@@ -1,2 +1,2 @@
-v1.5
-- Added number-of-decks configuration
+v1.51
+- Added number-of-decks configuration (v1.5)

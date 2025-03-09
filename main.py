@@ -1,10 +1,15 @@
-# Do some refactoring and add if __name__ == '__main__'!
-# Add config.py to modify game rules!
+# All the functions are declared in this module
+# Make the decks common for both player and dealer!
+# Add unique logic for multiple decks!
+# Add variations!
+# Add additional rules!
 
 from deck import deck
 from config import *
+
 import random
 from collections import Counter
+from time import sleep
 
 
 # Quit
@@ -13,27 +18,27 @@ def leave():
 	quit()
 
 
-# Number of decks
+# Number of decks configuration
+def number_of_decks_checker():
+	if SINGLE_DECK  ==  True:
+		return 1  
+	if TWO_DECKS    ==  True:
+		return 2  
+	if FOUR_DECKS   ==  True:
+		return 4  
+	if SIX_DECKS    ==  True:
+		return 6  
+	if EIGHT_DECKS  ==  True:
+		return 8
+
+
+# Card duplicates protector
 def number_of_decks(used_cards, new_card, num_of_decks):
 	hand_counter = dict(Counter(used_cards))
 	if hand_counter[new_card] > num_of_decks:
 		used_cards.pop()
 		return True
 	return False
-
-
-# Number of decks configuration
-def number_of_decks_checker():
-	if SINGLE_DECK == True:
-		return 1
-	if TWO_DECKS == True:
-		return 2
-	if FOUR_DECKS == True:
-		return 4
-	if SIX_DECKS == True:
-		return 6
-	if EIGHT_DECKS == True:
-		return 8
 
 
 # Interim results
@@ -76,86 +81,96 @@ def dealer_hand(primary_card, primary_val):
 
 		print_cur_results(cur_hand, sum(dealer_score)) 
 
+		sleep(1)
+
 	return sum(dealer_score)
 
 
-''' Pre-game declarations '''
+def main():
 
-print('\nWell, well, well, if it ain\'t gambling motherfucker again.\n')
-
-num_of_decks_checker = number_of_decks_checker()
-
-''' Game loop '''
-while True:
-
-	cur_hand = []
-	player_score = []
-
-	# Dealer's primary card
-	tmp_key_dealer, tmp_val_dealer = random.choice(list(deck.items()))
-	print('Dealer\'s got ' + tmp_key_dealer + ' and (hole card)')
+	''' Pre-game declarations '''
 	
-	''' Round loop '''
+	print('\nWell, well, well, if it ain\'t gambling motherfucker again.\n')
+	
+	num_of_decks_checker = number_of_decks_checker()
+	
+	''' Game loop '''
 	while True:
 	
-		''' Player's actions '''
-
-		action = input('\nWhat do we do? ( 1 - Hit | 2 - Stand | 3 - Leave ) : ')
+		cur_hand = []
+		player_score = []
 	
-		# Hit
-		if action == '1':
+		# Dealer's primary card
+		tmp_key_dealer, tmp_val_dealer = random.choice(list(deck.items()))
+		print('Dealer\'s got ' + tmp_key_dealer + ' and (hole card)')
+		
+		''' Round loop '''
+		while True:
+		
+			''' Player's actions '''
 	
-			tmp_key, tmp_val = random.choice(list(deck.items()))
+			action = input('\nWhat do we do? ( 1 - Hit | 2 - Stand | 3 - Leave ) : ')
+		
+			# Hit
+			if action == '1':
+		
+				tmp_key, tmp_val = random.choice(list(deck.items()))
+		
+				cur_hand.append(tmp_key)
+		
+				# Duplicates checker
+				if number_of_decks(cur_hand, tmp_key, num_of_decks_checker):
+					continue
+				
+				player_score.append(tmp_val)
+		
+				variable_ace(player_score)
 	
-			cur_hand.append(tmp_key)
-	
-			# Duplicates checker
-			if number_of_decks(cur_hand, tmp_key, num_of_decks_checker):
-				continue
-			
-			player_score.append(tmp_val)
-	
-			variable_ace(player_score)
-
-			print_cur_results(cur_hand, sum(player_score)) 
-	
-		# Stand
-		elif action == '2':
-			dealer_turn = dealer_hand(tmp_key_dealer, tmp_val_dealer)
-			if dealer_turn > sum(player_score) and dealer_turn <= 21:
-				print('You lose!\n')
-			elif dealer_turn == sum(player_score):
-				print('Push!\n')
-			else:
-				print('You win!\n')
-			break
-	
-		# Leave
-		elif action == '3':
-			leave()
-	
-		else:
-			print('Unknown value.\n')
-			continue
-	
-		''' Round results '''
-
-		# Bust
-		if sum(player_score) > 21:
-			print('Bust!\n')
-			break
-	
-		# Dealer and player both got blackjacks
-		elif sum(player_score) == 21:
-			print('Blackjack!\n')
-			if tmp_key_dealer.startswith('A'):
-				tmp_key_dealer, tmp_val_dealer = random.choice(list(deck.items()))
-				print_cur_results(tmp_key_dealer, tmp_val_dealer)
-				if tmp_val_dealer == 10:
+				print_cur_results(cur_hand, sum(player_score)) 
+		
+			# Stand
+			elif action == '2':
+				dealer_turn = dealer_hand(tmp_key_dealer, tmp_val_dealer)
+				if dealer_turn > sum(player_score) and dealer_turn <= 21:
+					print('You lose!\n')
+				elif dealer_turn == sum(player_score):
 					print('Push!\n')
 				else:
 					print('You win!\n')
-			break
+				break
+		
+			# Leave
+			elif action == '3':
+				leave()
+		
+			else:
+				print('Unknown value.\n')
+				continue
+		
+			''' Round results '''
+	
+			# Bust
+			if sum(player_score) > 21:
+				print('Bust!\n')
+				break
+		
+			# Dealer and player both got blackjacks
+			elif sum(player_score) == 21:
+				print('Blackjack!\n')
+				if tmp_key_dealer.startswith('A'):
+					tmp_key_dealer, tmp_val_dealer = random.choice(list(deck.items()))
+					print_cur_results(tmp_key_dealer, tmp_val_dealer)
+					if tmp_val_dealer == 10:
+						print('Push!\n')
+					else:
+						print('You win!\n')
+				break
+	
+			else:
+				pass
 
-		else:
-			pass
+
+''' Initiation '''
+
+if __name__ == '__main__':
+	main()
