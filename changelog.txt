@@ -1,2 +1,2 @@
-v1.41
-- New game-rule for pocket blackjack
+v1.5
+- Added number-of-decks configuration

@@ -2,15 +2,41 @@
 # Add config.py to modify game rules!
 
 from deck import deck
+from config import *
 import random
 from collections import Counter
 
 
+# Quit
 def leave():
 	input('C\'ya, puta!')
 	quit()
 
 
+# Number of decks
+def number_of_decks(used_cards, new_card, num_of_decks):
+	hand_counter = dict(Counter(used_cards))
+	if hand_counter[new_card] > num_of_decks:
+		used_cards.pop()
+		return True
+	return False
+
+
+# Number of decks configuration
+def number_of_decks_checker():
+	if SINGLE_DECK == True:
+		return 1
+	if TWO_DECKS == True:
+		return 2
+	if FOUR_DECKS == True:
+		return 4
+	if SIX_DECKS == True:
+		return 6
+	if EIGHT_DECKS == True:
+		return 8
+
+
+# Interim results
 def print_cur_results(cards, score):
 	print('Current hand: ', end='')
 	for i in cards:
@@ -18,10 +44,19 @@ def print_cur_results(cards, score):
 	print('\nScore: ' + str(score))
 
 
-def dealer_hand(primary_card, primary_val):
+# Variable Ace
+def variable_ace(score):
+	while sum(score) > 21 and 11 in score:
+		ace_index = score.index(11)
+		score[ace_index] = 1 
 
+
+# Dealer's turn
+def dealer_hand(primary_card, primary_val):
 	cur_hand = []
 	dealer_score = []
+
+	num_of_decks_checker = number_of_decks_checker()
 
 	cur_hand.append(primary_card)
 	dealer_score.append(primary_val)
@@ -31,40 +66,40 @@ def dealer_hand(primary_card, primary_val):
 	
 		cur_hand.append(tmp_key)
 	
-		# 4 колоды
-		hand_counter = dict(Counter(cur_hand))
-		if hand_counter[tmp_key] > 4:
-			cur_hand.pop()
+		# Duplicates checker
+		if number_of_decks(cur_hand, tmp_key, num_of_decks_checker):
 			continue
 		
 		dealer_score.append(tmp_val)
 	
-		# Изменяемый туз
-		while sum(dealer_score) > 21 and 11 in dealer_score:
-			ace_index = dealer_score.index(11)
-			dealer_score[ace_index] = 1 
+		variable_ace(dealer_score)
 
 		print_cur_results(cur_hand, sum(dealer_score)) 
 
 	return sum(dealer_score)
 
 
+''' Pre-game declarations '''
+
 print('\nWell, well, well, if it ain\'t gambling motherfucker again.\n')
 
-# Game loop
+num_of_decks_checker = number_of_decks_checker()
+
+''' Game loop '''
 while True:
 
 	cur_hand = []
 	player_score = []
 
-	# Первичная карта дилера
+	# Dealer's primary card
 	tmp_key_dealer, tmp_val_dealer = random.choice(list(deck.items()))
 	print('Dealer\'s got ' + tmp_key_dealer + ' and (hole card)')
 	
-	# Round loop
+	''' Round loop '''
 	while True:
 	
-		# Действия игрока
+		''' Player's actions '''
+
 		action = input('\nWhat do we do? ( 1 - Hit | 2 - Stand | 3 - Leave ) : ')
 	
 		# Hit
@@ -74,18 +109,13 @@ while True:
 	
 			cur_hand.append(tmp_key)
 	
-			# 4 колоды
-			hand_counter = dict(Counter(cur_hand))
-			if hand_counter[tmp_key] > 4:
-				cur_hand.pop()
+			# Duplicates checker
+			if number_of_decks(cur_hand, tmp_key, num_of_decks_checker):
 				continue
 			
 			player_score.append(tmp_val)
 	
-			# Изменяемый туз
-			while sum(player_score) > 21 and 11 in player_score:
-				ace_index = player_score.index(11)
-				player_score[ace_index] = 1 
+			variable_ace(player_score)
 
 			print_cur_results(cur_hand, sum(player_score)) 
 	
@@ -108,13 +138,14 @@ while True:
 			print('Unknown value.\n')
 			continue
 	
-	
-		# Проверка результатов раунда
+		''' Round results '''
+
+		# Bust
 		if sum(player_score) > 21:
 			print('Bust!\n')
 			break
 	
-		# Ситуация с двумя блэкджеками (неверные правила!)
+		# Dealer and player both got blackjacks
 		elif sum(player_score) == 21:
 			print('Blackjack!\n')
 			if tmp_key_dealer.startswith('A'):
@@ -125,3 +156,6 @@ while True:
 				else:
 					print('You win!\n')
 			break
+
+		else:
+			pass

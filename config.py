@@ -1,21 +1,30 @@
-# Number of decks
-
-SINGLE_DECK = False
-
-FOUR_DECK = True
-
-EIGHT_DECK = False
+# Not in use yet!
 
 
-# Variations
+''' Number of decks '''
 
-US = True
+SINGLE_DECK     =  True
+   
+TWO_DECKS       =  False
+   
+FOUR_DECKS      =  False
+   
+SIX_DECKS       =  False
+   
+EIGHT_DECKS     =  False
 
-EU = False
+
+''' Variations '''
+
+US              =  False
+   
+EU              =  False
+
+DOUBLE_EXPOSURE =  False
 
 
-# Additional rules
+''' Additional rules '''
 
-SPLIT = False
+SPLIT           =  False
 
-DOUBLE_DOWN = False
+DOUBLE_DOWN     =  False
