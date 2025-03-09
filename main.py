@@ -1,4 +1,3 @@
-# Dealer must show his first card!
 # Do some refactoring and add if __name__ == '__main__'!
 # Add config.py to modify game rules!
 
@@ -19,10 +18,13 @@ def print_cur_results(cards, score):
 	print('\nScore: ' + str(score))
 
 
-def dealer_hand():
+def dealer_hand(primary_card, primary_val):
 
 	cur_hand = []
 	dealer_score = []
+
+	cur_hand.append(primary_card)
+	dealer_score.append(primary_val)
 
 	while sum(dealer_score) < 17:
 		tmp_key, tmp_val = random.choice(list(deck.items()))
@@ -47,22 +49,26 @@ def dealer_hand():
 	return sum(dealer_score)
 
 
-print('Well, well, well, if it ain\'t gambling motherfucker again.')
+print('\nWell, well, well, if it ain\'t gambling motherfucker again.\n')
 
-
+# Game loop
 while True:
 
 	cur_hand = []
 	player_score = []
+
+	# Первичная карта дилера
+	tmp_key_dealer, tmp_val_dealer = random.choice(list(deck.items()))
+	print('Dealer\'s got ' + tmp_key_dealer + ' and (hole card)')
 	
-	run = True
-	while run:
+	# Round loop
+	while True:
 	
-		# Взять карту / Остановиться
+		# Действия игрока
+		action = input('\nWhat do we do? ( 1 - Hit | 2 - Stand | 3 - Leave ) : ')
 	
-		a = input('\nWhat do we do? ( 1 - Hit | 2 - Pass | 3 - Leave ) : ')
-	
-		if a == '1':
+		# Hit
+		if action == '1':
 	
 			tmp_key, tmp_val = random.choice(list(deck.items()))
 	
@@ -83,32 +89,39 @@ while True:
 
 			print_cur_results(cur_hand, sum(player_score)) 
 	
-		elif a == '2':
-			dealer_turn = dealer_hand()
+		# Stand
+		elif action == '2':
+			dealer_turn = dealer_hand(tmp_key_dealer, tmp_val_dealer)
 			if dealer_turn > sum(player_score) and dealer_turn <= 21:
-				print('You lose!')
+				print('You lose!\n')
+			elif dealer_turn == sum(player_score):
+				print('Push!\n')
 			else:
-				print('You win!')
+				print('You win!\n')
 			break
 	
-		elif a == '3':
+		# Leave
+		elif action == '3':
 			leave()
 	
 		else:
-			print('Unknown value.')
+			print('Unknown value.\n')
 			continue
 	
 	
 		# Проверка результатов раунда
-	
 		if sum(player_score) > 21:
-			print('Bust!')
+			print('Bust!\n')
 			break
 	
+		# Ситуация с двумя блэкджеками (неверные правила!)
 		elif sum(player_score) == 21:
-			print('BJ!')
+			print('Blackjack!\n')
+			if tmp_key_dealer.startswith('A'):
+				tmp_key_dealer, tmp_val_dealer = random.choice(list(deck.items()))
+				print_cur_results(tmp_key_dealer, tmp_val_dealer)
+				if tmp_val_dealer == 10:
+					print('Push!\n')
+				else:
+					print('You win!\n')
 			break
-			# Ход дилера (перепроверить правила блэкджека)
-	
-		else:
-			pass
