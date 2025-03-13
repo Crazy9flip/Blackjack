@@ -1,4 +1,2 @@
-v1.6
-- Fixed the 'Duplicate' event
-- Added ASM and CSM
-- Adjusted natural blackjack rules
+v1.7
+- Added EU and US variations

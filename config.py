@@ -18,20 +18,20 @@ EIGHT_DECKS     =  False
 
 US              =  False
    
-EU              =  False
+EU              =  True
 
-DOUBLE_EXPOSURE =  False
-
-
-''' Additional rules '''
-
-SPLIT           =  False
-
-DOUBLE_DOWN     =  False
-
-SURRENDER       =  False
-
-INSURANCE       =  False
+DOUBLE_EXPOSURE =  False  # -
+ 
+ 
+''' Additional rules ''' 
+ 
+SPLIT           =  False  # -
+ 
+DOUBLE_DOWN     =  False  # -
+ 
+SURRENDER       =  False  # -
+ 
+INSURANCE       =  False  # -
 
 
 ''' Shuffling system '''

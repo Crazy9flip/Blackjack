@@ -92,14 +92,28 @@ def hit(hand, score, all_used_cards):
     printCurResults(hand, sum(score))
 
 
-# Dealer's primary card
-def dealerPrimaryCard(all_used_cards, max_num_of_duplicates = numberOfDecksChecker()):
-	tmp_items = skipIterationOnDuplicateAndChoose(all_used_cards)
-	dealer_tmp_key, dealer_tmp_val = tmp_items[0], tmp_items[1]
-	return [dealer_tmp_key, dealer_tmp_val]
+# Check if player has natural blackjack (EU variation)
+def playerNaturalBJChecker(player_hand, dealer_primary_card, all_used_cards):
+	if len(player_hand) == 2:
+		print('Blackjack!\n')
+		if dealer_primary_card[1] in [10, 11]:
+			if dealerNaturalBJChecker(dealer_primary_card, all_used_cards):
+				print('Push!\n')
+			else:
+				print('You win!\n')
+		else:
+			print('You win!\n')
+	else:
+		if dealer_primary_card[1] in [10, 11]:
+			if dealerNaturalBJChecker(dealer_primary_card, all_used_cards):
+				print('You lose!\n')
+			else:
+				print('You win!\n')
+		else:
+			print('You win!\n')
 
 
-# Check if dealer also has natural blackjack
+# Check if dealer has natural blackjack
 def dealerNaturalBJChecker(dealer_primary_card, all_used_cards):
 	dealer_second_card = dealerPrimaryCard(all_used_cards)
 	dealer_primary_card.extend(dealer_second_card)
@@ -112,9 +126,16 @@ def dealerNaturalBJChecker(dealer_primary_card, all_used_cards):
 			continue
 
 	if dealer_tmp_sum == 21:
-		print('Push!\n')
+		return True
 	else:
-		print('You win!\n')
+		return False
+
+
+# Dealer's primary card
+def dealerPrimaryCard(all_used_cards, max_num_of_duplicates = numberOfDecksChecker()):
+	tmp_items = skipIterationOnDuplicateAndChoose(all_used_cards)
+	dealer_tmp_key, dealer_tmp_val = tmp_items[0], tmp_items[1]
+	return [dealer_tmp_key, dealer_tmp_val]
 
 
 # Dealer's turn
@@ -153,7 +174,15 @@ def main():
 		player_score = []
 
 		dealer_primary_card = dealerPrimaryCard(all_used_cards)
-		print('Upcard: ' + dealer_primary_card[0])
+
+		# Variation checker
+		if EU:
+			print('Upcard: ' + dealer_primary_card[0])
+		if US:
+			print('Upcard: ' + dealer_primary_card[0] + ' and (hole card)')
+			if dealerNaturalBJChecker(dealer_primary_card, all_used_cards):
+				print('You lose!\n')
+				continue
 		
 		''' Round loop '''
 		while True:
@@ -197,15 +226,7 @@ def main():
 			elif sum(player_score) == 21:
 
 				# Natural blackjack
-				if len(player_hand) == 2:
-					print('Blackjack!\n')
-
-				# Dealer's natural blackjack
-				else:
-					if dealer_primary_card[1] not in [10, 11]:
-						print('You win!\n')
-					else:
-						dealerNaturalBJChecker(dealer_primary_card, all_used_cards)
+				playerNaturalBJChecker(player_hand, dealer_primary_card, all_used_cards)
 				break
 
 
