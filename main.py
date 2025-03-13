@@ -1,13 +1,13 @@
 # All the functions are declared in this module
-# Make the decks common for both player and dealer!
-# Add unique logic for multiple decks!
 # Add variations!
 # Add additional rules!
+# Do some refactoring!
+# Make class dealer?
 
 from deck import deck
 from config import *
 
-import random
+from random import choice
 from collections import Counter
 from time import sleep
 
@@ -19,90 +19,141 @@ def leave():
 
 
 # Number of decks configuration
-def number_of_decks_checker():
-	if SINGLE_DECK  ==  True:
+def numberOfDecksChecker():
+	if SINGLE_DECK:
 		return 1  
-	if TWO_DECKS    ==  True:
+	if TWO_DECKS:
 		return 2  
-	if FOUR_DECKS   ==  True:
+	if FOUR_DECKS:
 		return 4  
-	if SIX_DECKS    ==  True:
+	if SIX_DECKS:
 		return 6  
-	if EIGHT_DECKS  ==  True:
+	if EIGHT_DECKS:
 		return 8
 
 
 # Card duplicates protector
-def number_of_decks(used_cards, new_card, num_of_decks):
-	hand_counter = dict(Counter(used_cards))
-	if hand_counter[new_card] > num_of_decks:
-		used_cards.pop()
+def duplicatesProtector(new_card, all_used_cards, max_num_of_duplicates = numberOfDecksChecker()):
+	hand_counter = dict(Counter(all_used_cards))
+	if hand_counter[new_card] > max_num_of_duplicates:
+		all_used_cards.pop()
 		return True
 	return False
 
 
+# Skip iteration on duplicate and choose a random card
+def skipIterationOnDuplicateAndChoose(all_used_cards):
+	while True:
+		tmp_key, tmp_val = choice(list(deck.items()))
+		all_used_cards.append(tmp_key)
+		if duplicatesProtector(tmp_key, all_used_cards):
+			continue
+		break
+	return [tmp_key, tmp_val]
+
+
 # Interim results
-def print_cur_results(cards, score):
+def printCurResults(hand, score):
 	print('Current hand: ', end='')
-	for i in cards:
+	for i in hand:
 		print(i, end=' ')
 	print('\nScore: ' + str(score))
 
 
 # Variable Ace
-def variable_ace(score):
+def variableAce(score):
 	while sum(score) > 21 and 11 in score:
 		ace_index = score.index(11)
 		score[ace_index] = 1 
 
 
+# CSM (always for SINGLE_DECK and TWO_DECKS) | ASM
+def shuffle(all_used_cards, max_num_of_duplicates = numberOfDecksChecker()):
+	if max_num_of_duplicates in [1, 2]:
+		all_used_cards.clear()
+		print('The deck(s) have been shuffled.\n')
+	else:
+		if CSM:
+			all_used_cards.clear()
+			print('The deck(s) have been shuffled.\n')
+		if ASM:
+			if len(all_used_cards) >= (max_num_of_duplicates * 26):
+				all_used_cards.clear()
+				print('The deck(s) have been shuffled.\n')
+
+
+# Take a card
+def hit(hand, score, all_used_cards):
+    tmp_items = skipIterationOnDuplicateAndChoose(all_used_cards)
+    tmp_key, tmp_val = tmp_items[0], tmp_items[1]    
+    hand.append(tmp_key)
+    score.append(tmp_val)
+    variableAce(score)
+    printCurResults(hand, sum(score))
+
+
+# Dealer's primary card
+def dealerPrimaryCard(all_used_cards, max_num_of_duplicates = numberOfDecksChecker()):
+	tmp_items = skipIterationOnDuplicateAndChoose(all_used_cards)
+	dealer_tmp_key, dealer_tmp_val = tmp_items[0], tmp_items[1]
+	return [dealer_tmp_key, dealer_tmp_val]
+
+
+# Check if dealer also has natural blackjack
+def dealerNaturalBJChecker(dealer_primary_card, all_used_cards):
+	dealer_second_card = dealerPrimaryCard(all_used_cards)
+	dealer_primary_card.extend(dealer_second_card)
+	dealer_tmp_sum = 0
+
+	for i in range(len(dealer_primary_card)):
+		try:
+			dealer_tmp_sum += dealer_primary_card[i]
+		except TypeError:
+			continue
+
+	if dealer_tmp_sum == 21:
+		print('Push!\n')
+	else:
+		print('You win!\n')
+
+
 # Dealer's turn
-def dealer_hand(primary_card, primary_val):
-	cur_hand = []
+def dealerPlay(primary_items, all_used_cards, max_num_of_duplicates = numberOfDecksChecker()):
+
+	dealer_hand  = []
 	dealer_score = []
 
-	num_of_decks_checker = number_of_decks_checker()
-
-	cur_hand.append(primary_card)
-	dealer_score.append(primary_val)
+	dealer_hand.append(primary_items[0])
+	dealer_score.append(primary_items[1])
 
 	while sum(dealer_score) < 17:
-		tmp_key, tmp_val = random.choice(list(deck.items()))
-	
-		cur_hand.append(tmp_key)
-	
-		# Duplicates checker
-		if number_of_decks(cur_hand, tmp_key, num_of_decks_checker):
-			continue
-		
-		dealer_score.append(tmp_val)
-	
-		variable_ace(dealer_score)
-
-		print_cur_results(cur_hand, sum(dealer_score)) 
-
+		hit(dealer_hand, dealer_score, all_used_cards) 
 		sleep(1)
 
 	return sum(dealer_score)
 
 
+# Main
 def main():
 
 	''' Pre-game declarations '''
 	
 	print('\nWell, well, well, if it ain\'t gambling motherfucker again.\n')
 	
-	num_of_decks_checker = number_of_decks_checker()
+	max_num_of_duplicates = numberOfDecksChecker()
+	
+	all_used_cards = []
 	
 	''' Game loop '''
 	while True:
-	
-		cur_hand = []
+
+		shuffle(all_used_cards)
+
+		player_hand  = []
 		player_score = []
-	
-		# Dealer's primary card
-		tmp_key_dealer, tmp_val_dealer = random.choice(list(deck.items()))
-		print('Dealer\'s got ' + tmp_key_dealer + ' and (hole card)')
+
+		dealer_primary_card = dealerPrimaryCard(all_used_cards)
+		print('Upcard: ' + dealer_primary_card[0])
 		
 		''' Round loop '''
 		while True:
@@ -113,24 +164,12 @@ def main():
 		
 			# Hit
 			if action == '1':
-		
-				tmp_key, tmp_val = random.choice(list(deck.items()))
-		
-				cur_hand.append(tmp_key)
-		
-				# Duplicates checker
-				if number_of_decks(cur_hand, tmp_key, num_of_decks_checker):
-					continue
-				
-				player_score.append(tmp_val)
-		
-				variable_ace(player_score)
-	
-				print_cur_results(cur_hand, sum(player_score)) 
+				hit(player_hand, player_score, all_used_cards)
 		
 			# Stand
 			elif action == '2':
-				dealer_turn = dealer_hand(tmp_key_dealer, tmp_val_dealer)
+				dealer_turn = dealerPlay(dealer_primary_card, all_used_cards)
+
 				if dealer_turn > sum(player_score) and dealer_turn <= 21:
 					print('You lose!\n')
 				elif dealer_turn == sum(player_score):
@@ -154,20 +193,20 @@ def main():
 				print('Bust!\n')
 				break
 		
-			# Dealer and player both got blackjacks
+			# Blackjack
 			elif sum(player_score) == 21:
-				print('Blackjack!\n')
-				if tmp_key_dealer.startswith('A'):
-					tmp_key_dealer, tmp_val_dealer = random.choice(list(deck.items()))
-					print_cur_results(tmp_key_dealer, tmp_val_dealer)
-					if tmp_val_dealer == 10:
-						print('Push!\n')
-					else:
+
+				# Natural blackjack
+				if len(player_hand) == 2:
+					print('Blackjack!\n')
+
+				# Dealer's natural blackjack
+				else:
+					if dealer_primary_card[1] not in [10, 11]:
 						print('You win!\n')
+					else:
+						dealerNaturalBJChecker(dealer_primary_card, all_used_cards)
 				break
-	
-			else:
-				pass
 
 
 ''' Initiation '''

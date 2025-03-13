@@ -1,2 +1,4 @@
-v1.51
-- Added number-of-decks configuration (v1.5)
+v1.6
+- Fixed the 'Duplicate' event
+- Added ASM and CSM
+- Adjusted natural blackjack rules

@@ -32,3 +32,12 @@ DOUBLE_DOWN     =  False
 SURRENDER       =  False
 
 INSURANCE       =  False
+
+
+''' Shuffling system '''
+
+# Always for SINGLE_DECK and TWO_DECKS
+
+CSM             =  False
+ 
+ASM             =  True
