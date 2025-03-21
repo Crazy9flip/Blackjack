@@ -36,8 +36,6 @@ INSURANCE       =  False  # -
 
 ''' Shuffling system '''
 
-# Always for SINGLE_DECK and TWO_DECKS
-
-CSM             =  False
+CSM             =  False  # Always for SINGLE_DECK and TWO_DECKS
  
 ASM             =  True

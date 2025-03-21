@@ -1,4 +1,4 @@
-# Aces' true values determined in main.py
+# Aces' true values determined in functions.py
 
 deck = {
     'As'  : 11,

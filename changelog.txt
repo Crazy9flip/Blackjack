@@ -1,2 +1,2 @@
-v1.7
-- Added EU and US variations
+v2.0
+- Started UI implementation
