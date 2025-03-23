@@ -1,5 +1,5 @@
 # Auto-generated local bytecode
 __pycache__
 
-# Test files
-test
+# Huge files causing errors
+.source/

@@ -1,2 +1,1 @@
-v2.0
-- Started UI implementation
+[ The game is currently in pre-alpha state ]
