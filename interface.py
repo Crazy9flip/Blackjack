@@ -2,6 +2,7 @@
 
 import pygame
 import os
+import json
 
 from config import *
 from deck import deck
@@ -25,7 +26,7 @@ pygame.font.init()
 
 # PRESETS
 
-# Display
+# General
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Blackjack")
 pygame.display.set_icon(pygame.image.load(os.path.join(__file__, '../resources/icon/icon.png')))
@@ -45,7 +46,14 @@ max_num_of_duplicates = numberOfDecksChecker()
 
 all_used_cards = []
 
-bankroll = 500
+with open("saves/bankroll.json", "r") as f:
+    bankroll_dict = json.load(f)
+if not bankroll_dict["bankroll"]:
+    with open("saves/bankroll.json", "w") as f:
+        bankroll_dict["bankroll"] = 500
+        json.dump(bankroll_dict, f)
+bankroll = bankroll_dict["bankroll"]
+
 bankrupt = False
 
 # Card images dict
@@ -130,7 +138,7 @@ def buttonIdentifierAndActivator(pos):
 run_game = True
 while run_game:
 
-    time_delay = False
+    end_round = False
     result = None
 
     if bankroll <= 0:
@@ -189,43 +197,45 @@ while run_game:
         # Round results
         if bankrupt:
             drawText(screen, 'BANKRUPT', WIDTH // 2, HEIGHT // 2, color=(224, 11, 0))
-            time_delay = True
+            end_round = True
             run_round = False
             run_game = False
 
 
         if result == 'L':
             drawText(screen, 'YOU LOSE', WIDTH // 2, HEIGHT // 2, color=(224, 11, 0))
-            time_delay = True
+            end_round = True
             run_round = False
     
         elif result == 'W':
             drawText(screen, 'YOU WIN', WIDTH // 2, HEIGHT // 2, color=(143, 197, 97))
             bankroll += 50
-            time_delay = True
+            end_round = True
             run_round = False
     
         elif result == 'P':
             drawText(screen, 'PUSH', WIDTH // 2, HEIGHT // 2, color=(255, 255, 255))
             bankroll += 25
-            time_delay = True
+            end_round = True
             run_round = False
 
 
         if sum(player_score) > 21:
             drawText(screen, 'YOU LOSE', WIDTH / 2, HEIGHT / 2, color=(224, 11, 0))
-            time_delay = True
+            end_round = True
             
             run_round = False
         elif sum(player_score) == 21:
             drawText(screen, 'YOU WIN', WIDTH / 2, HEIGHT / 2, color=(143, 197, 97))
             bankroll += 50
-            time_delay = True
+            end_round = True
             run_round = False
 
         pygame.display.flip()
 
-        if time_delay:
+        if end_round:
+            with open("saves/bankroll.json", "w") as f:
+                json.dump({"bankroll": bankroll}, f)
             pygame.time.delay(2000)
 
 pygame.quit()
