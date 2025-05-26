@@ -26,9 +26,6 @@ pip install -r requirements.txt
 https://docs.python.org/3/library/venv.html
 <br/>
 
-
-<br/>
-
 ## Running the game
 
 Run from root directory
