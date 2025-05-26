@@ -1,5 +1,4 @@
-# Auto-generated local bytecode
-__pycache__
-
-# Huge files causing errors
+__pycache__/
 .source/
+venv
+.venv

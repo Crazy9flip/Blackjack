@@ -1,19 +1,16 @@
-# All the functions are declared in this module
-# Add variations!
-# Add additional rules!
-# Do some refactoring!
-# Save players' data in JSON!
-
-from deck import deck
-from config import *
+''' All the functions are declared in this module
+You can run this module as console blackjack '''
 
 from random import choice
 from collections import Counter
 
+from .deck import deck
+from .settings import *
+
 
 # Quit
 def leave():
-    input('C\'ya, puta!')
+    input('C\'ya, gambler!')
     quit()
 
 

@@ -1,15 +1,16 @@
-# Basically main.py
+# Run this module
 
-import pygame
 import os
 import json
 
-from config import *
-from deck import deck
-from base import *
+import pygame
+
+from src.deck import deck
+from src.settings import *
+from src.base import *
 
 
-# CONFIG
+# DISPLAY
 WIDTH, HEIGHT = 1000, 800
 FPS = 60
 
@@ -29,23 +30,24 @@ pygame.font.init()
 # General
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Blackjack")
-pygame.display.set_icon(pygame.image.load(os.path.join(__file__, '../resources/icon/icon.png')))
-
+pygame.display.set_icon(pygame.image.load(os.path.join(__file__, '../assets/icon/icon.png')))
 clock = pygame.time.Clock()
 
+# Sounds
 button_click_sound = pygame.mixer.Sound(os.path.join(SFX_FOLDER, "button_click.wav"))
 button_click_sound.set_volume(0.3)
 
+# Music
 pygame.mixer.music.load(os.path.join(MUSIC_FOLDER, "Howlin Wolf - Spoonful.mp3"))
 pygame.mixer.music.set_volume(0.3)
 pygame.mixer.music.play(-1)
 
+# Fonts
 font = pygame.font.Font(os.path.join(FONT_FOLDER, 'Bukukoo.ttf'), 36)
 
+# Pre-game
 max_num_of_duplicates = numberOfDecksChecker()
-
 all_used_cards = []
-
 with open("saves/bankroll.json", "r") as f:
     bankroll_dict = json.load(f)
 if not bankroll_dict["bankroll"]:
@@ -53,7 +55,6 @@ if not bankroll_dict["bankroll"]:
         bankroll_dict["bankroll"] = 500
         json.dump(bankroll_dict, f)
 bankroll = bankroll_dict["bankroll"]
-
 bankrupt = False
 
 # Card images dict
